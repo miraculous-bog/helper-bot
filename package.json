@@ -1,0 +1,16 @@
+{
+  "name": "vinnytsia-helper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "nodemon": "^2.0.15",
+    "node-telegram-bot-api": "^0.56.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "miraculous <bogdan9110@gmail.com>",
+  "license": "ISC"
+}
