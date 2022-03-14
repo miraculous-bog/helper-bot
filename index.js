@@ -79,6 +79,18 @@ const showKeyboard = (chatId) => {
         ],
         [
           {
+            text: "Існуючі пропозиції житла",
+            callback_data: "showShelter",
+          },
+        ],
+                [
+          {
+            text: "Існуючі пропозиції волонтерства",
+            callback_data: "showVolunteering",
+          },
+        ],
+        [
+          {
             text: "Потребую допомогу",
             callback_data: "requestVolunteering",
           },
@@ -87,6 +99,7 @@ const showKeyboard = (chatId) => {
             callback_data: "offerVolunteering",
           },
         ],
+
         ...allArraysOfBtns,
       ],
     },
@@ -210,20 +223,21 @@ const getHachtag = (tag) => {
 };
 const sendAllTypesMsg = (post, id, btn = null, info = null) => {
   console.log("INFO", info);
-  // console.log(isAdmin({ chat: id }));
+ 
   let text = post.caption;
-  // console.log(Bool(isAdmin({ chat: { id: id } })));
-  // console.log(Bool(info !== null));
+
   console.log(isAdmin({ chat: { id: id } }));
   console.log(post, id, info);
 
   if (isAdmin({ chat: { id: id } }) && info !== null) {
     console.log("yaaaaaaaaaaaaaaaaaaaa");
-
+    text += `\n--------------------------\n`
+    text += `ім'я користувача ${info.name}\n`;
+    text += `username користувача @${info.username}\n`;
+    text += `id користувача ${info.id}\n`;
+    text += `id повідомлення ${info.msgId}`;
     console.log(info);
-    // console.log(`ім'я користувача ${info.name}\n`);
-    // console.log(Bool(isAdmin({ chat: { id: id } })));
-    // console.log(Bool(info !== null));
+    post.caption = text;
   }
   // console.log(`id користувача ${info.id}\n`);
   // console.log(`username користувача ${info.username}\n`);
@@ -292,6 +306,39 @@ const getTypeFile = (msg) => {
     };
   }
 };
+const counterPostsSection = {
+  counter: 0,
+  type: undefined,
+  arrayPost: undefined,
+};
+
+const sendSepSectionPost = (id) => {
+   bot.sendMessage(id, "Далі...",{
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: `0 / ${arrayPost.length}>>>`,
+            callback_data: "next",
+          },
+        ],
+                [
+          {
+            text: "Розділи",
+            callback_data: "menu",
+          },
+        ],
+      ],
+    },
+});
+// counterPostsSection.arrayPost
+const outputPosts = (id) => {
+  const mainPost = dinamickPost.filter(post => post.main === true && post.type === counterPostsSection.type);
+  const noMainPost = dinamickPost.filter(post => post.main === true && post.type === counterPostsSection.type);
+  counterPostsSection.arrayPost = noMainPost;
+  mainPost.forEach(post => sendAllTypesMsg(post,id));
+
+}
 
 bot.on("message", (msg) => {
   if (msg.text !== undefined) {
@@ -335,10 +382,9 @@ const getMsg = (query) => {
   if (typeStaticPost.includes(query.data)) {
     staticPost.forEach((post) => {
       if (post.type === query.data) {
-        sendAllTypesMsg(post.content, id, null, {
-          ...post.userInfo,
-          // ...user.msgId,
-        });
+        const infoUserObj = {...post.userInfo};
+        infoUserObj.msgId = post.msgId; 
+        sendAllTypesMsg(post.content, id, null, infoUserObj);
       }
     });
   }
@@ -372,6 +418,72 @@ const getMsg = (query) => {
         dinamickPost
       );
       break;
+    case "showShelter":
+      bot.sendMessage(id, "Бажаєте переглянути пости пропонованого житла, чи хто потребує його?",{
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Пости житла",
+            callback_data: "showShelterOff",
+          },
+        ],
+                [
+          {
+            text: "Пости потребуючих житло",
+            callback_data: "showShelterReq",
+          },
+        ],
+                [
+          {
+            text: "Розділи",
+            callback_data: "menu",
+          },
+        ],
+      ],
+    },
+  });
+      break;
+    case "showVolunteering":
+            bot.sendMessage(id, "Бажаєте переглянути пости пропонованого волонтерства/допомоги, чи хто потребує допомоги?",{
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Пости допомоги/волонтерства",
+            callback_data: "showVolunteerinqOff",
+          },
+        ],
+                [
+          {
+            text: "Пости потребуючих допомоги",
+            callback_data: "showVolunteerinqReq",
+          },
+        ],
+                [
+          {
+            text: "Розділи",
+            callback_data: "menu",
+          },
+        ],
+      ],
+    },
+  });
+      break;
+
+      case "showShelterOff":
+          counterPostsSection.counter = 0;
+          counterPostsSection.type = 'offerShelter';
+          counterPostsSection.arrayPost = undefined;
+          outputPosts();
+         break;
+
+      case "showShelterReq":
+          counterPostsSection.counter = 0;
+          counterPostsSection = 'requestShelter';
+          counterPostsSection.arrayPost = undefined;
+          outputPosts();
+        break;
     case "menu":
       showKeyboard(id);
       // bot.sendMessage(id, "Розділи", showKeyboard(getChatId(msg)));
@@ -430,6 +542,7 @@ const getMsg = (query) => {
             name: query.message.chat.first_name,
             id: query.message.chat.id,
           },
+          main: false,
         });
         bot.sendMessage(getChatId(query.message), "Ваший пост успішно доданий");
       }
@@ -500,19 +613,3 @@ bot.onText(/\/addPost/, (msg) => {
     );
   }
 });
-
-// bot.onText(/\/requestShelter/, (msg) => {
-//   doCommandAction("requestShelter", msg);
-// });
-
-// bot.onText(/\/offerShelter/, (msg) => {
-//   doCommandAction("offerShelter", msg);
-// });
-
-// bot.onText(/\/requestVolunteering/, (msg) => {
-//   doCommandAction("requestVolunteering", msg);
-// });
-
-// bot.onText(/\/offerVolunteering/, (msg) => {
-//   doCommandAction("offerVolunteering", msg);
-// });
