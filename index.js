@@ -31,7 +31,90 @@ const info = {
   ],
   tab_point: [""],
 };
-const dinamickPost = [];
+const dinamickPost = [
+  {
+    content: { type: 'text', content: '1======', caption: '1======' },
+    type: 'requestShelter',
+    msgId: 2011,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '2----------', caption: '2----------' },
+    type: 'requestShelter',
+    msgId: 2015,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '3===========', caption: '3===========' },
+    type: 'requestShelter',
+    msgId: 2019,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '4========', caption: '4========' },
+    type: 'requestShelter',
+    msgId: 2023,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '5======', caption: '5======' },
+    type: 'requestShelter',
+    msgId: 2028,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '6====', caption: '6====' },
+    type: 'requestShelter',
+    msgId: 2032,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '7=========', caption: '7=========' },
+    type: 'requestShelter',
+    msgId: 2036,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: {
+      type: 'text',
+      content: '8============',
+      caption: '8============'
+    },
+    type: 'requestShelter',
+    msgId: 2040,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '9======', caption: '9======' },
+    type: 'requestShelter',
+    msgId: 2044,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  },
+  {
+    content: { type: 'text', content: '10====', caption: '10====' },
+    type: 'requestShelter',
+    msgId: 2048,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  }
+  ,
+  {
+    content: { type: 'text', content: '11====', caption: '11====' },
+    type: 'requestShelter',
+    msgId: 2056,
+    userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
+    main: false
+  }
+];
 
 const typeStaticPost = [];
 const staticPost = [];
@@ -41,6 +124,7 @@ const getChatId = (msg) => {
   return msg.chat.id;
 };
 const showKeyboard = (chatId) => {
+  console.log('keyyyyyboard');
   const allArraysOfBtns = typeStaticPost.map((item) => {
     return [
       {
@@ -313,12 +397,13 @@ const counterPostsSection = {
 };
 
 const sendSepSectionPost = (id) => {
+    console.log('3outputPosts=================');
    bot.sendMessage(id, "Далі...",{
     reply_markup: {
       inline_keyboard: [
         [
           {
-            text: `0 / ${arrayPost.length}>>>`,
+            text: `${counterPostsSection.counter} / ${counterPostsSection.arrayPost.length}>>>`,
             callback_data: "next",
           },
         ],
@@ -330,15 +415,20 @@ const sendSepSectionPost = (id) => {
         ],
       ],
     },
-});
-// counterPostsSection.arrayPost
-const outputPosts = (id) => {
-  const mainPost = dinamickPost.filter(post => post.main === true && post.type === counterPostsSection.type);
-  const noMainPost = dinamickPost.filter(post => post.main === true && post.type === counterPostsSection.type);
-  counterPostsSection.arrayPost = noMainPost;
-  mainPost.forEach(post => sendAllTypesMsg(post,id));
+})};
 
-}
+const outputPosts = (id) => {
+  console.log(counterPostsSection);
+  console.log('outputPosts=================');
+  const mainPost = dinamickPost.filter(post => post.main === true && post.type === counterPostsSection.type);
+  const noMainPost = dinamickPost.filter(post => post.main === false && post.type === counterPostsSection.type);
+  console.log(mainPost,noMainPost);
+  counterPostsSection.arrayPost =[...noMainPost];
+  console.log(counterPostsSection.arrayPost,"........",noMainPost);
+  mainPost.forEach(post => sendAllTypesMsg(post.content,id));
+  console.log('2outputPosts=================');
+  sendSepSectionPost(id);
+};
 
 bot.on("message", (msg) => {
   if (msg.text !== undefined) {
@@ -418,6 +508,54 @@ const getMsg = (query) => {
         dinamickPost
       );
       break;
+    case "next":
+
+
+
+
+
+
+
+
+        console.log("neeext seccuess====");
+    let Action = false;
+    const getSituableAction = (isDo) => {
+
+      if(isDo) {
+      console.log('isDoiiing');
+          bot.sendMessage(getChatId(query.message), "Ваші розділи туть", getMenuBtn());
+      } else {
+     sendSepSectionPost(getChatId(query.message));        
+      }
+    }
+    let iter = 3;
+    if(counterPostsSection.counter + iter >= counterPostsSection.arrayPost.length) {
+      iter = counterPostsSection.arrayPost.length- counterPostsSection.counter;
+      Action = true;
+      console.log("YEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+    }
+    console.log("neeext seccuess====");
+      let iteration = counterPostsSection.counter + iter;
+      console.log(iteration);
+     console.log("iteer anhd counterPostsSection",counterPostsSection.counter,iter);
+      const newId = getChatId(query.message);
+     for (let i = counterPostsSection.counter; i<iteration; i++) {
+      console.log(i);
+            setTimeout(sendAllTypesMsg, 1000,counterPostsSection.arrayPost[i].content,newId);
+     }
+     console.log("iteer anhd counterPostsSection",counterPostsSection.counter,iter);
+     counterPostsSection.counter+=iter;
+     console.log("iteer anhd counterPostsSection",counterPostsSection.counter,iter);
+
+     setTimeout(getSituableAction, 5000,Action);
+
+
+
+
+
+
+
+      break;
     case "showShelter":
       bot.sendMessage(id, "Бажаєте переглянути пости пропонованого житла, чи хто потребує його?",{
     reply_markup: {
@@ -451,13 +589,13 @@ const getMsg = (query) => {
         [
           {
             text: "Пости допомоги/волонтерства",
-            callback_data: "showVolunteerinqOff",
+            callback_data: "showVolunteeringOff",
           },
         ],
                 [
           {
             text: "Пости потребуючих допомоги",
-            callback_data: "showVolunteerinqReq",
+            callback_data: "showVolunteeringReq",
           },
         ],
                 [
@@ -475,14 +613,28 @@ const getMsg = (query) => {
           counterPostsSection.counter = 0;
           counterPostsSection.type = 'offerShelter';
           counterPostsSection.arrayPost = undefined;
-          outputPosts();
+          outputPosts(getChatId(query.message));
          break;
 
       case "showShelterReq":
           counterPostsSection.counter = 0;
-          counterPostsSection = 'requestShelter';
+          counterPostsSection.type = 'requestShelter';
           counterPostsSection.arrayPost = undefined;
-          outputPosts();
+          outputPosts(getChatId(query.message));
+        break;
+
+      case "showVolunteerinqOff":
+          counterPostsSection.counter = 0;
+          counterPostsSection.type = 'offerVolunteerinq';
+          counterPostsSection.arrayPost = undefined;
+          outputPosts(getChatId(query.message));
+         break;
+
+      case "showVolunteerinqReq":
+          counterPostsSection.counter = 0;
+          counterPostsSection.type = 'requestVolunteerinq';
+          counterPostsSection.arrayPost = undefined;
+          outputPosts(getChatId(query.message));
         break;
     case "menu":
       showKeyboard(id);
@@ -531,7 +683,9 @@ const getMsg = (query) => {
       } else if (user.state == 1) {
         user.state = 0;
         console.log("2");
-
+        console.log('//////////////',temporyMsg[1].caption);
+        temporyMsg[1].caption += `\n\nЗа деталями звертатися до @${query.message.chat.username}`;
+       console.log('//////////////',temporyMsg[1].caption);
         user.posting[`${temporyMsg[0]}`] = false;
         dinamickPost.push({
           content: temporyMsg[1],
