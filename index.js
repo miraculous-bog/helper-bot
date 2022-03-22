@@ -138,18 +138,18 @@ const showKeyboard = (chatId) => {
   bot.sendMessage(chatId, "smth", {
     reply_markup: {
       inline_keyboard: [
-        [
-          {
-            text: "show users",
-            callback_data: "show_users",
-          },
-        ],
-        [
-          {
-            text: "Бачу диверсанта/окупанта",
-            callback_data: "define_enemy",
-          },
-        ],
+        // [
+        //   {
+        //     text: "show users",
+        //     callback_data: "show_users",
+        //   },
+        // ],
+        // [
+        //   {
+        //     text: "Бачу диверсанта/окупанта",
+        //     callback_data: "define_enemy",
+        //   },
+        // ],
 
         [
           {
@@ -281,6 +281,14 @@ const sendMsg = function (msg, text) {
 
 const getUser = (msg) => Users.find((user) => user.id === msg.chat.id);
 
+const getUserById = (id) => Users.find((user) => user.id === id);
+
+const getStaticPostById = (id) => staticPost.find((post) => post.msgId === id);
+
+const getStaticType = (title) => typeStaticPost.find((name) => name === title);
+
+const getDinamicPostById = (id) => dinamickPost.find((post) => post.msgId === id);
+
 const isAdmin = (msg) =>
   Users.find((admin) => admin.id === msg.chat.id && admin.status === true);
 
@@ -312,7 +320,7 @@ const sendAllTypesMsg = (post, id, btn = null, info = null) => {
 
   console.log(isAdmin({ chat: { id: id } }));
   console.log(post, id, info);
-
+// if(!post.caption.includes("username користувача @")) {
   if (isAdmin({ chat: { id: id } }) && info !== null) {
     console.log("yaaaaaaaaaaaaaaaaaaaa");
     text += `\n--------------------------\n`
@@ -321,8 +329,8 @@ const sendAllTypesMsg = (post, id, btn = null, info = null) => {
     text += `id користувача ${info.id}\n`;
     text += `id повідомлення ${info.msgId}`;
     console.log(info);
-    post.caption = text;
   }
+  
   // console.log(`id користувача ${info.id}\n`);
   // console.log(`username користувача ${info.username}\n`);
   // console.log(text);
@@ -347,23 +355,23 @@ const sendAllTypesMsg = (post, id, btn = null, info = null) => {
 
   if (post.type === "text") {
     btn !== null
-      ? bot.sendMessage(id, post.caption, parseBtn)
-      : bot.sendMessage(id, post.caption);
+      ? bot.sendMessage(id, text, parseBtn)
+      : bot.sendMessage(id, text);
   } else if (post.type === "video") {
     if (btn !== null) {
       bot.sendVideo(id, post.content);
-      bot.sendMessage(id, post.caption, parseBtn);
+      bot.sendMessage(id, text, parseBtn);
     } else {
       bot.sendVideo(id, post.content);
-      bot.sendMessage(id, post.caption);
+      bot.sendMessage(id, text);
     }
   } else if (post.type === "photo") {
     if (btn !== null) {
       bot.sendPhoto(id, post.content);
-      bot.sendMessage(id, post.caption, parseBtn);
+      bot.sendMessage(id, text, parseBtn);
     } else {
       bot.sendPhoto(id, post.content);
-      bot.sendMessage(id, post.caption);
+      bot.sendMessage(id, text);
     }
   }
 };
@@ -505,7 +513,9 @@ const getMsg = (query) => {
         "-----",
         staticPost,
         "-----",
-        dinamickPost
+        dinamickPost,
+        "-----",
+        Users
       );
       break;
     case "next":
@@ -541,7 +551,9 @@ const getMsg = (query) => {
       const newId = getChatId(query.message);
      for (let i = counterPostsSection.counter; i<iteration; i++) {
       console.log(i);
-            setTimeout(sendAllTypesMsg, 1000,counterPostsSection.arrayPost[i].content,newId);
+             const infoUserObj = {...counterPostsSection.arrayPost[i].userInfo};
+        infoUserObj.msgId = counterPostsSection.arrayPost[i].msgId; 
+            setTimeout(sendAllTypesMsg, 1000,counterPostsSection.arrayPost[i].content,newId,null,infoUserObj);
      }
      console.log("iteer anhd counterPostsSection",counterPostsSection.counter,iter);
      counterPostsSection.counter+=iter;
@@ -767,3 +779,77 @@ bot.onText(/\/addPost/, (msg) => {
     );
   }
 });
+
+bot.onText(/\/turnAdmin (.+)/, (msg, source, match) => {
+  const currentText = Number(source[1]);
+  console.log(currentText);
+  if (isAdmin(msg)) {
+    console.log("before user");
+    const user = getUserById(currentText);
+    console.log(user);
+    if (user.status === false) {
+    user.status = true;
+    }
+   else {
+    user.status = false;
+  }
+}
+  });
+
+bot.onText(/\/deleteStaticPost (.+)/, (msg, source, match) => {
+  const currentText = Number(source[1]);
+  console.log(currentText);
+  if (isAdmin(msg)) {
+    console.log(getStaticPostById(currentText));
+    const positionCurrentEl = staticPost.indexOf(getStaticPostById(currentText));
+
+
+    console.log(staticPost,positionCurrentEl);
+    staticPost.splice(positionCurrentEl, 1);
+    console.log(staticPost);
+}
+  });
+bot.onText(/\/deleteStaticType (.+)/, (msg, source, match) => {
+  const currentText = source[1];
+  console.log(currentText);
+  if (isAdmin(msg)) {
+    const positionCurrentEl = typeStaticPost.indexOf(getStaticType(currentText));
+
+
+     console.log(staticPost,positionCurrentEl);
+    typeStaticPost.splice(positionCurrentEl, 1);
+    console.log(staticPost);
+}
+  });
+
+bot.onText(/\/deleteStaticType (.+)/, (msg, source, match) => {
+  const currentText = source[1];
+  console.log(currentText);
+  if (isAdmin(msg)) {
+    const positionCurrentEl = typeStaticPost.indexOf(getStaticType(currentText));
+
+
+     console.log(staticPost,positionCurrentEl);
+    typeStaticPost.splice(positionCurrentEl, 1);
+    console.log(staticPost);
+}
+  });
+
+bot.onText(/\/showType/, (msg) => {
+  if (isAdmin(msg)) {
+    typeStaticPost.forEach(title => bot.sendMessage(getChatId(msg),title));
+  }
+});
+
+bot.onText(/\/deleteDinamicType (.+)/, (msg, source, match) => {
+  const currentText = Number(source[1]);
+  console.log(currentText);
+  if (isAdmin(msg)) {
+    const positionCurrentEl = dinamickPost.indexOf(getDinamicPostById(currentText));
+
+
+     console.log(staticPost,positionCurrentEl);
+    dinamickPost.splice(positionCurrentEl, 1);
+    console.log(staticPost);
+}
+  });
