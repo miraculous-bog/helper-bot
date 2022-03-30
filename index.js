@@ -3,7 +3,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const Token = "5226417031:AAFwZUpeQRflnyN3IuqlQxsErEkwnVJEMus";
 
 const bot = new TelegramBot(Token, { polling: true });
-
+let num_adm = 1;
 const Users = [
   {
     id: 357629644,
@@ -138,12 +138,12 @@ const showKeyboard = (chatId) => {
   bot.sendMessage(chatId, "smth", {
     reply_markup: {
       inline_keyboard: [
-        // [
-        //   {
-        //     text: "show users",
-        //     callback_data: "show_users",
-        //   },
-        // ],
+        [
+          {
+            text: "show users",
+            callback_data: "show_users",
+          },
+        ],
         // [
         //   {
         //     text: "Бачу диверсанта/окупанта",
@@ -433,9 +433,10 @@ const outputPosts = (id) => {
   console.log(mainPost,noMainPost);
   counterPostsSection.arrayPost =[...noMainPost];
   console.log(counterPostsSection.arrayPost,"........",noMainPost);
-  mainPost.forEach(post => sendAllTypesMsg(post.content,id));
+  mainPost.forEach(post => setTimeout(sendAllTypesMsg,1000,post.content,id));
   console.log('2outputPosts=================');
-  sendSepSectionPost(id);
+  setTimeout(sendSepSectionPost,4000,id);
+  // sendSepSectionPost(id);
 };
 
 bot.on("message", (msg) => {
@@ -533,7 +534,7 @@ const getMsg = (query) => {
 
       if(isDo) {
       console.log('isDoiiing');
-          bot.sendMessage(getChatId(query.message), "Ваші розділи туть", getMenuBtn());
+          bot.sendMessage(getChatId(query.message), "Ваші розділи туть 👇", getMenuBtn());
       } else {
      sendSepSectionPost(getChatId(query.message));        
       }
@@ -635,16 +636,16 @@ const getMsg = (query) => {
           outputPosts(getChatId(query.message));
         break;
 
-      case "showVolunteerinqOff":
+      case "showVolunteeringOff":
           counterPostsSection.counter = 0;
-          counterPostsSection.type = 'offerVolunteerinq';
+          counterPostsSection.type = 'offerVolunteering';
           counterPostsSection.arrayPost = undefined;
           outputPosts(getChatId(query.message));
          break;
 
-      case "showVolunteerinqReq":
+      case "showVolunteeringReq":
           counterPostsSection.counter = 0;
-          counterPostsSection.type = 'requestVolunteerinq';
+          counterPostsSection.type = 'requestVolunteering';
           counterPostsSection.arrayPost = undefined;
           outputPosts(getChatId(query.message));
         break;
@@ -652,6 +653,7 @@ const getMsg = (query) => {
       showKeyboard(id);
       // bot.sendMessage(id, "Розділи", showKeyboard(getChatId(msg)));
       break;
+
     case "edit":
       bot.sendMessage(id, "введіть новий текст");
       break;
@@ -716,9 +718,23 @@ const getMsg = (query) => {
 };
 
 bot.onText(/\/start/, (msg) => {
-  const text = `Вітаємо`;
-  const userId = msg.from.id;
 
+  const userId = msg.from.id;
+const text1 = `🔰Для початку роботи натисніть "розділи".
+
+📄Для того аби зробити публікацію:
+
+🙋‍♂️🏡Натисніть "Потребую житло", якщо ви бажаєте опублікувати інформацію про потребу житла 
+
+💁‍♂️🏡Натисніть "Пропоную житло", якщо ви бажаєте опублікувати інформацію про можливість надати житло
+
+🙋‍♂️❤️‍🩹Натисніть "Потребую допомоги", якщо ви бажаєте опублікувати інформацію про потребу. Це може бути фінансова, гуманітарна, військова, медична або будь-яка потреба.
+
+💁‍♂️❤️‍🩹Натисніть "Пропоную допомогу", якщо ви бажаєте опублікувати інформацію про можливість надати допомогу. Це може бути фінансова, гуманітарна, військова, медична або будь-яка допомога.`;
+  const text2 = `Для того, аби переглянути публікації інших щодо допомоги або її надання: 
+
+🔎🏡Натисніть "Існуючі пропозиції житла"
+🔎❤️‍🩹Натисніть "Існуючі пропозиції волонтерсва"`;
   console.log(userId);
   // console.log(isExist);
   console.log(Users);
@@ -744,8 +760,11 @@ bot.onText(/\/start/, (msg) => {
         },
       })
     : null;
-
-  bot.sendMessage(getChatId(msg), "Ваші розділи туть", getMenuBtn());
+ bot.sendMessage(getChatId(msg), text1);
+ bot.sendMessage(getChatId(msg), text2);
+  // bot.sendMessage(getChatId(msg), text2);
+ // bot.sendMessage(getChatId(msg), text2);
+  bot.sendMessage(getChatId(msg), "Ваші розділи туть 👇", getMenuBtn());
 
   // getMenuBtn();
 });
@@ -822,18 +841,18 @@ bot.onText(/\/deleteStaticType (.+)/, (msg, source, match) => {
 }
   });
 
-bot.onText(/\/deleteStaticType (.+)/, (msg, source, match) => {
-  const currentText = source[1];
-  console.log(currentText);
-  if (isAdmin(msg)) {
-    const positionCurrentEl = typeStaticPost.indexOf(getStaticType(currentText));
+// bot.onText(/\/deleteStaticType (.+)/, (msg, source, match) => {
+//   const currentText = source[1];
+//   console.log(currentText);
+//   if (isAdmin(msg)) {
+//     const positionCurrentEl = typeStaticPost.indexOf(getStaticType(currentText));
 
 
-     console.log(staticPost,positionCurrentEl);
-    typeStaticPost.splice(positionCurrentEl, 1);
-    console.log(staticPost);
-}
-  });
+//      console.log(staticPost,positionCurrentEl);
+//     typeStaticPost.splice(positionCurrentEl, 1);
+//     console.log(staticPost);
+// }
+//   });
 
 bot.onText(/\/showType/, (msg) => {
   if (isAdmin(msg)) {
@@ -853,3 +872,115 @@ bot.onText(/\/deleteDinamicType (.+)/, (msg, source, match) => {
     console.log(staticPost);
 }
   });
+
+bot.onText(/\/makeTopDinamicPost (.+)/, (msg, source, match) => {
+  const currentText = Number(source[1]);
+  console.log(currentText);
+  if (isAdmin(msg)) {
+    const positionCurrentEl = dinamickPost.indexOf(getDinamicPostById(currentText));
+
+
+     console.log(staticPost,positionCurrentEl);
+     if (dinamickPost[positionCurrentEl].main===true) {
+        dinamickPost[positionCurrentEl].main=false;
+     } else {
+      dinamickPost[positionCurrentEl].main=true;
+     }
+    // dinamickPost[positionCurrentEl].main=true;
+    console.log(staticPost);
+}
+  });
+
+const getInfoCurrentNot = (meaning) => {
+  if (meaning) {
+    return 'увімкнено✅';
+  } else {
+    return 'ввимкнено❌';
+  }
+}
+
+bot.onText(/\/turnRequestShelter/, (msg) => {
+
+  const positionCurrentEl = Users.indexOf(getUser(msg));
+  if(Users[positionCurrentEl].subscribed.requestShelter===true) {
+    Users[positionCurrentEl].subscribed.requestShelter=false;
+     bot.sendMessage(getChatId(msg), "Ви ввимкнули");
+
+  } else {
+        Users[positionCurrentEl].subscribed.requestShelter=true;
+     bot.sendMessage(getChatId(msg), "Ви увімкнули");
+
+  }
+  bot.sendMessage(getChatId(msg), "Ваші розділи туть 👇", getMenuBtn());
+
+});
+
+bot.onText(/\/turnOfferShelter/, (msg) => {
+
+  const positionCurrentEl = Users.indexOf(getUser(msg));
+  if(Users[positionCurrentEl].subscribed.offerShelter===true) {
+    Users[positionCurrentEl].subscribed.offerShelter=false;
+     bot.sendMessage(getChatId(msg), "Ви відключили");
+
+  } else {
+        Users[positionCurrentEl].subscribed.offerShelter=true;
+     bot.sendMessage(getChatId(msg), "Ви включили");
+
+  }
+  bot.sendMessage(getChatId(msg), "Ваші розділи туть 👇", getMenuBtn());
+
+});
+
+bot.onText(/\/turnRequestVolunteering/, (msg) => {
+
+  const positionCurrentEl = Users.indexOf(getUser(msg));
+  if(Users[positionCurrentEl].subscribed.requestVolunteering===true) {
+    Users[positionCurrentEl].subscribed.requestVolunteering=false;
+     bot.sendMessage(getChatId(msg), "Ви відключили");
+
+  } else {
+        Users[positionCurrentEl].subscribed.requestVolunteering=true;
+     bot.sendMessage(getChatId(msg), "Ви включили");
+
+  }
+  bot.sendMessage(getChatId(msg), "Ваші розділи туть 👇", getMenuBtn());
+
+});
+bot.onText(/\/turnOfferVolunteering/, (msg) => {
+
+  const positionCurrentEl = Users.indexOf(getUser(msg));
+  if(Users[positionCurrentEl].subscribed.offerVolunteering===true) {
+    Users[positionCurrentEl].subscribed.offerVolunteering=false;
+     bot.sendMessage(getChatId(msg), "Ви відключили");
+
+  } else {
+        Users[positionCurrentEl].subscribed.offerVolunteering=true;
+     bot.sendMessage(getChatId(msg), "Ви включили");
+
+  }
+  bot.sendMessage(getChatId(msg), "Ваші розділи туть 👇", getMenuBtn());
+
+});
+
+const getAllAdimns = () => Users.filter(user => user.status===true);
+
+bot.onText(/\/callAdmin/, (msg) => {
+
+  getAllAdimns().forEach(admin => bot.sendMessage(admin.id, `@${msg.from.username} викликває адміна.\n Звернення #${num_adm}`));
+    bot.sendMessage(getChatId(msg), `Звернення #${num_adm} в обробці. Очікуйте зворотнього зв'язку`);
+  num_adm++;
+});
+
+bot.onText(/\/infoNotification/, (msg) => {
+  bot.sendMessage(getChatId(msg), `Сповіщення
+
+Ви можете вимкнути або увімкнути надходження постів певної категорії скориставшись наступними командами:
+/turnRequestShelter - надходження щодо запропонованого житла. Ваш поточний статус: ${getInfoCurrentNot(getUser(msg).subscribed.requestShelter)}
+/turnOfferShelter - надходження щодо потребуючих житло. Ваш поточний статус: ${getInfoCurrentNot((getUser(msg).subscribed.offerShelter))}
+/turnRequestVolunteering - надходження щодо запропонованої допомоги. Ваш поточний статус: ${getInfoCurrentNot((getUser(msg).subscribed.requestVolunteering))}
+/turnOfferVolunteering - надходження щодо потребуючих допомоги. Ваш поточний статус: ${getInfoCurrentNot((getUser(msg).subscribed.offerVolunteering))}`);
+});
+
+bot.onText(/\/menu/, (msg) => {
+  bot.sendMessage(getChatId(msg), `Ваші розділи туть 👇`,getMenuBtn());
+});
