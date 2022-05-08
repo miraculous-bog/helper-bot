@@ -1,6 +1,6 @@
-const { getCipherInfo, createCipheriv } = require("crypto");
+
 const TelegramBot = require("node-telegram-bot-api");
-const Token = "5226417031:AAFwZUpeQRflnyN3IuqlQxsErEkwnVJEMus";
+const Token = "";
 
 const bot = new TelegramBot(Token, { polling: true });
 let num_adm = 1;
@@ -20,119 +20,11 @@ const Users = [
     },
   },
 ];
+let idForSendMsgUser = [];
 
-const info = {
-  tab_blood: [
-    "Рекомендуємо перед тим, як піти в пункт зателефонувати в лікарню і уточнити про поточний стан кількиості крові, зробити це можна зателефонувавши лікарні (номер можна знайти на google map)\n\nВінниця \nвул. Пирогова, 48\n\nІллінці\nвул. Енгельса, 48\n\nГайсин\nвул. Гурвича, 1\n\nЯмпіль\nвул. Пирогова, 1\n\n Могилів-Подільський\nвул. Полтавська, 89/2\n\nШаргород\nвул. Пархоменко, 9\n\nБар\nвул. Рози Люксембург, 34\n\nБершадь\nвул. Будкевича, 2",
-  ],
-  tab_point: [""],
-};
-const typeDinamicPost = ["ліки", "житло", "волонтерство", "їжа", "інше"];
+const typeDinamicPost = [];
 const dinamickPost = [
-  {
-    content: {
-      type: 'text',
-      content: 'pills',
-      caption: '#пропоную_ліки\n\npills'
-    },
-    type: 'ліки',
-    msgId: 4651,
-    userInfo: { username: undefined, name: 'Miraculous', id: 357629644 },
-    main: false
-  },
-  {
-    content: {
-      type: 'text',
-      content: 'home',
-      caption: '#потребую_житло\n\nhome'
-    },
-    type: 'житло',
-    msgId: 4658,
-    userInfo: { username: undefined, name: 'Miraculous', id: 357629644 },
-    main: false
-  }
-  //   {
-  //     content: { type: 'text', content: '1======', caption: '1======' },
-  //     type: 'requestShelter',
-  //     msgId: 2011,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '2----------', caption: '2----------' },
-  //     type: 'requestShelter',
-  //     msgId: 2015,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '3===========', caption: '3===========' },
-  //     type: 'requestShelter',
-  //     msgId: 2019,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '4========', caption: '4========' },
-  //     type: 'requestShelter',
-  //     msgId: 2023,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '5======', caption: '5======' },
-  //     type: 'requestShelter',
-  //     msgId: 2028,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '6====', caption: '6====' },
-  //     type: 'requestShelter',
-  //     msgId: 2032,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '7=========', caption: '7=========' },
-  //     type: 'requestShelter',
-  //     msgId: 2036,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: {
-  //       type: 'text',
-  //       content: '8============',
-  //       caption: '8============'
-  //     },
-  //     type: 'requestShelter',
-  //     msgId: 2040,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '9======', caption: '9======' },
-  //     type: 'requestShelter',
-  //     msgId: 2044,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   },
-  //   {
-  //     content: { type: 'text', content: '10====', caption: '10====' },
-  //     type: 'requestShelter',
-  //     msgId: 2048,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   }
-  //   ,
-  //   {
-  //     content: { type: 'text', content: '11====', caption: '11====' },
-  //     type: 'requestShelter',
-  //     msgId: 2056,
-  //     userInfo: { username: 'miraculous_bog', name: 'Miraculous', id: 357629644 },
-  //     main: false
-  //   }
+
 ];
 
 const typeStaticPost = [];
@@ -144,13 +36,19 @@ const getChatId = (msg) => {
 };
 
 const getPostBoard = (chatId) => {
-  bot.sendMessage(chatId, `📃Зробити та переглянути публікації про допомогу або запроповнувати її.
+  bot.sendMessage(chatId, `Бот “Гуманітар” дозволить вам знайти або отримати:
 
-  Ви можете запропонувати/знайти допомогу по таким пунктам як :
+  📍 прихисток;
+  📍амуніція;
+  📍 ліки;
+  📍 одяг;
+  📍 волонтерів;
+  📍гуманітарні штаби країни;
+  📍харчові продукти.
   
-  💁‍♂️Натисніть "Пропоную" - якщо ви бажаєте запропонувати свою допомогу.
-  🙋‍♂️Натисніть "Потребую" - якщо ви бажаєте опублікувати пост про надання вам допомоги.
-  📋Натисніть "Список пропонуючих та потребуючих допомоги" - якщо ви бажаєте продивитися список усіх постів та знайти шось для себе.`, {
+  Тицни #пропоную, якщо бажаєш запропонувати допомогу.
+  
+  Тицни #потребую, якщо бажаєш знайти допомогу.`, {
     reply_markup: {
       inline_keyboard: [
         // [
@@ -284,7 +182,8 @@ function sendingWrittenPost(msg) {
       },
     });
   } else if (user.temporyMsg[1].type === "video") {
-    bot.sendVideo(getChatId(msg), msg.video.file_id, msg.caption, {
+    let cpt = msg.caption ? msg.caption : '---';
+    bot.sendVideo(getChatId(msg), msg.video.file_id, cpt, {
       reply_markup: {
         inline_keyboard: [
           [
@@ -305,8 +204,9 @@ function sendingWrittenPost(msg) {
       },
     });
   } else if (user.temporyMsg[1].type === "photo") {
+    let cpt = msg.caption ? msg.caption : '---';
     bot.sendPhoto(getChatId(msg), msg.photo[0].file_id);
-    bot.sendMessage(getChatId(msg), msg.caption, {
+    bot.sendMessage(getChatId(msg), cpt, {
       reply_markup: {
         inline_keyboard: [
           [
@@ -365,7 +265,10 @@ const deletePost = (id, postId) => {
 const sendAllTypesMsg = (post, id, btn = null, info = null) => {
   // console.log("BTN HERE", btn);
   // console.log("INFO", info);
-
+  console.log('POST!!', post);
+  console.log('ID!!', id);
+  console.log('BTN', btn);
+  console.log('INFO', info);
   let text = post.caption;
 
   // console.log(isAdmin({ chat: { id: id } }));
@@ -504,11 +407,10 @@ bot.on("message", (msg) => {
   if (getUser(msg).state !== 0) sendingWrittenPost(msg);
 });
 const doCommandAction = (command, posting, msg) => {
-  const text = `📃Напишіть пост стосовно розділу ${command}.
-  Напишіть текстове повідомлення вашого запиту або пропозиції.
-  ❕Ви також можете використати тільки одну картинку або відео, та додати опис для неї. Вся інформація повинна бути відправлена одним повідомленням.
-  ❗️Обов'язково додайте інформацію, яка дасть змогу зв'язатися з вами.
-   ✅Автоматично бот додає ваш нікнейм з телеграму, якщо він у вас наявний, а також хештег.`;
+  const text = `Запропонуй або запроси допомогу стосовно #${command}.
+  Ти можеш використати тільки одну картинку або відео, обов'язково додай опис та свої контакти. Вся інформація буде відправлятись одним повідомленням, тому перечитай кілька разів, аби ні про що не забути.
+  
+  Бот автоматично додає твій нікнейм з телеграму, якщо він є в тебе, а також хештег.`;
   sendMsg(msg, text);
   const user = getUser(msg);
   console.log("469 doCommandActionFC", user.temporyMsg);
@@ -780,10 +682,7 @@ const getMsg = (query) => {
       console.log("user 732", user);
       if (user.state == 2) {
         user.state = 0;
-        // console.log("2");
 
-        // user.posting[`${temporyMsg[0]}`] = false;
-        // console.log("3");
         const getMetaData = getTypeAndContent(user.temporyMsg[1].caption);
 
         user.temporyMsg[0] = getMetaData[0];
@@ -791,7 +690,7 @@ const getMsg = (query) => {
         if (!typeStaticPost.includes(user.temporyMsg[0])) {
           typeStaticPost.push(user.temporyMsg[0]);
         }
-        // console.log("query.message_______________++++++++", query.message);
+
         console.log("714 ", user.temporyMsg);
         staticPost.push({
           content: user.temporyMsg[1],
@@ -809,7 +708,36 @@ const getMsg = (query) => {
         })
         // console.log("great");
         // sendAllTypesMsg(user.temporyMsg[1], id, query.message.message_id);
-      } else if (user.state == 1) {
+      }
+      else if (user.state == 3) {
+        user.state = 0;
+        console.log("----------------", user);
+        // console.log("2");
+        console.log("user 732", user);
+        console.log("732 ", user.temporyMsg);
+        let textInfo = user.posting;
+        textInfo += user.temporyMsg[1].caption;
+        if (query.message.chat.username !== undefined) {
+          textInfo += `\n\nЗа деталями звертатися до @${query.message.chat.username}`
+        }
+        user.temporyMsg[1].caption = textInfo;
+
+
+        user.posting = false;
+
+
+        if (idForSendMsgUser[0] === 0) {
+          sendAllTypesMsg(user.temporyMsg[1], idForSendMsgUser[1]);
+        } else if (idForSendMsgUser[0] === 1) {
+          Users.forEach(item => {
+            sendAllTypesMsg(user.temporyMsg[1], item.id);
+          });
+        }
+        idForSendMsgUser = [];
+        bot.sendMessage(id, "Відправили Інфо");
+      }
+
+      else if (user.state == 1) {
         user.state = 0;
         console.log("----------------", user);
         // console.log("2");
@@ -1163,4 +1091,63 @@ bot.onText(/\/showStatPost/, (msg) => {
   if (isAdmin(msg)) {
     staticPost.forEach(post => bot.sendMessage(getChatId(msg), JSON.stringify(post)));
   }
+});
+
+bot.onText(/\/text/, (msg) => {
+  // if (isAdmin(msg)) {
+  //   staticPost.forEach(post => bot.sendMessage(getChatId(msg), JSON.stringify(post)));
+  // }
+  sendAllTypesMsg({
+    type: 'text',
+    content: 'hoem',
+    caption: '#пропоную_житло\n\nhoem\n\nЗа деталями звертатися до @miraculous_bog'
+  }, 5113994904);
+});
+bot.onText(/\/sendMsgPerson (.+)/, (msg, source, match) => {
+  const currentText = source[1];
+  console.log(currentText);
+  // if (isAdmin(msg)) {
+  //   typeDinamicPost.push(currentText);
+  //   Users.forEach(user => user.notification.push([currentText, true]));
+  //   bot.sendMessage(getChatId(msg), `Категорія ${currentText} додана`)
+  // }
+});
+
+bot.onText(/\/sendMsgAllUsers/, (msg, source, match) => {
+  if (isAdmin(msg)) {
+    idForSendMsgUser.push(1);
+    getUser(msg).state = 3;
+    bot.sendMessage(
+      getChatId(msg),
+      "Вітаю шановний адмін, напишіть ваше повідомлення"
+    );
+  }
+});
+
+bot.onText(/\/sendMsgDefinedUser (.+)/, (msg, source, match) => {
+  if (isAdmin(msg)) {
+    const currentText = source[1];
+    idForSendMsgUser.push(0);
+    idForSendMsgUser.push(currentText);
+    getUser(msg).state = 3;
+    bot.sendMessage(
+      getChatId(msg),
+      "Вітаю шановний адмін, напишіть ваше повідомлення"
+    );
+  }
+});
+
+let textFromBot = `Привітик.
+Трішки статистики від нашої команди 📊
+👉Нашим ботом вже скористалися понад ${Users.length} персон. 🫂
+👉Було написано більше ${dinamickPost.length} постів. 📃
+
+Будемо тобі вдячні за репост/рекомендацію аби більше людей могли змогу швидко та доступно здобути інформацію про допомогу.👊
+Твій @gumanitar_bot`
+
+bot.onText(/\/sendMsgGenerealStatic/, (msg) => {
+  if (isAdmin(msg)) {
+    Users.forEach(usr => bot.sendMessage(usr.id, textFromBot));
+  }
+
 });
