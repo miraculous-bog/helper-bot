@@ -387,7 +387,7 @@ const outputPosts = (id, user) => {
   const mainPost = dinamickPost.filter(post => post.main === true && post.type === user.counterPostsSection.type);
   const noMainPost = dinamickPost.filter(post => post.main === false && post.type === user.counterPostsSection.type);
   // console.log(mainPost, noMainPost);
-  user.counterPostsSection.arrayPost = [...noMainPost];
+  user.counterPostsSection.arrayPost = [...noMainPost].reverse();
   // console.log(counterPostsSection.arrayPost, "........", noMainPost);
   mainPost.forEach(post => setTimeout(sendAllTypesMsg, 1000, post.content, id));
   console.log('2outputPosts=================');
@@ -565,7 +565,7 @@ const getMsg = (query) => {
           sendSepSectionPost(getChatId(query.message), user);
         }
       }
-      let iter = 3;
+      let iter = 5;
       if (user.counterPostsSection.counter + iter >= user.counterPostsSection.arrayPost.length) {
         iter = user.counterPostsSection.arrayPost.length - user.counterPostsSection.counter;
         Action = true;
