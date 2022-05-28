@@ -11,7 +11,7 @@ const Users = [
     username: "miraculous_bog",
     state: 0,
     posting: false,
-    notification: [["ліки", false], ["житло", true], ["волонтерство", true], ["їжа", true], ["інше", true]],
+    notification: [],
     temporyMsg: [],
     counterPostsSection: {
       counter: 0,
@@ -797,7 +797,7 @@ bot.onText(/\/start/, (msg) => {
       status: false,
       state: 0,
       posting: false,
-      notification: [["ліки", true], ["житло", true], ["волонтерство", true], ["їжа", true], ["інше", true]],
+      notification: [],
       temporyMsg: [],
       counterPostsSection: {
         counter: 0,
